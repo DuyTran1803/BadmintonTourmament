@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Badminton Tournament</title>
+<style>
+:root{--bg:#edf2ef;--card:#fff;--tx:#10231f;--mu:#5d6f6a;--ln:#d5dfda;--g:#1f6f5c;--y:#f2c230;--yt:#10231f;--ok:#e3f3ec;--wildbg:#fff1c7;--wildtx:#785600;--bad:#c2362b;--badbg:#fbe9e7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0e1815;--card:#15231f;--tx:#e8f1ee;--mu:#93a8a1;--ln:#26382f;--g:#4cc2a4;--ok:#173a30;--wildbg:#493b12;--wildtx:#ffe28a;--bad:#ff7b6e;--badbg:#3b1b18}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0e1815;--card:#15231f;--tx:#e8f1ee;--mu:#93a8a1;--ln:#26382f;--g:#4cc2a4;--ok:#173a30;--wildbg:#493b12;--wildtx:#ffe28a;--bad:#ff7b6e;--badbg:#3b1b18}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 "Avenir Next","Segoe UI",system-ui,sans-serif}
+header{padding:22px 16px 0;max-width:none;margin:0;background:#123c32;color:#fff;position:relative;overflow:hidden}
+header:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 49.8%,rgba(255,255,255,.13) 50%,transparent 50.2%);pointer-events:none}
+header>*{position:relative;z-index:1;max-width:1100px;margin-left:auto;margin-right:auto}
+h1{margin:0 0 18px;font-size:clamp(24px,4vw,36px);letter-spacing:-.035em}
+nav{display:flex;gap:4px;overflow-x:auto;border-bottom:2px solid rgba(255,255,255,.2)}
+nav button{flex:none;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:10px 14px;font:inherit;font-weight:600;color:var(--mu);cursor:pointer}
+nav button{color:#c6d8d1}nav button.on{color:#fff;border-bottom-color:var(--y)}
+main{max-width:1100px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:14px;margin-bottom:16px}
+h2{margin:0 0 10px;font-size:17px}
+textarea{width:100%;min-height:170px;font:13px/1.4 ui-monospace,Menlo,Consolas,monospace;background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:8px;padding:10px}
+.btn{font:inherit;font-weight:600;border:1px solid var(--ln);background:var(--card);color:var(--tx);border-radius:8px;padding:10px 14px;min-height:44px;cursor:pointer;margin:8px 8px 0 0}
+.btn.p{background:var(--y);border-color:var(--y);color:var(--yt)}
+:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+.sc{overflow-x:auto}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--ln);white-space:nowrap}
+th:nth-child(2),td:nth-child(2){text-align:left;width:100%}th{color:var(--mu);font-weight:600;font-size:13px}
+tr.q td{background:var(--ok)}tr.q td:nth-child(2){font-weight:700}tr.t td:nth-child(2){font-style:italic}tr.wild td{background:var(--wildbg)}tr.wild td:nth-child(2){font-weight:700}
+td b{font-weight:800}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:12px}
+.m{border:1px solid var(--ln);border-radius:8px;padding:6px 10px;background:var(--card)}
+.m.bad{border-color:var(--bad);background:var(--badbg)}
+.l{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 0}
+.l+.l{border-top:1px dashed var(--ln)}.l.w span{font-weight:800}.l.w span:before{content:"\25B8 ";color:var(--g)}
+.l span{overflow-wrap:anywhere}.tbd span{color:var(--mu);font-style:italic}
+input{width:62px;min-height:48px;font:inherit;font-size:19px;font-weight:700;text-align:center;padding:7px 4px;border:1px solid var(--ln);border-radius:6px;background:var(--bg);color:var(--tx)}
+.err{color:var(--bad);font-size:12px;padding-bottom:4px}
+.warn{background:var(--badbg);color:var(--bad);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:14px}
+.note{color:var(--mu);margin:0 0 12px}
+.br{display:flex;gap:18px;overflow-x:auto;padding-bottom:8px}
+.rd{flex:0 0 250px;display:flex;flex-direction:column;justify-content:space-around;gap:12px}
+.rd h3{margin:0;font-size:14px;color:var(--mu)}
+.champ{background:var(--y);color:var(--yt);border-radius:10px;padding:18px;text-align:center;margin-bottom:16px}
+.champ b{display:block;font-size:26px;overflow-wrap:anywhere}
+.tag{display:inline-block;background:var(--ok);border-radius:6px;padding:1px 8px;font-size:12px;font-weight:700;margin-left:6px}
+.tag.wild{background:var(--wildbg);color:var(--wildtx)}
+.tag.out{background:var(--badbg);color:var(--bad)}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:560px){main{padding:12px}.card{padding:12px}.grid{grid-template-columns:1fr}.rd{flex-basis:84vw}th,td{padding:7px 6px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+@media print{header,.btn{display:none!important}.card{box-shadow:none;break-inside:avoid}.br{overflow:visible}.rd{flex-basis:24%}}
+</style></head><body>
+<header><h1>Badminton Tournament</h1><nav id="nav" aria-label="Tournament sections"></nav></header>
+<main id="main"></main>
+<input class="sr" id="file" type="file" accept="application/json,.json">
+<script>
+const $=s=>document.querySelector(s);
+const SAMPLE='{\n  "Table A": ["duy+mai", "john + doe", "an+binh", "lee+min"],\n  "Table B": ["huy+lan", "tom+ann", "sam+kim", "ivy+noah"],\n  "Table C": ["ken+lily", "bao+vy", "max+zoe", "mia+leo"]\n}';
+let S={raw:SAMPLE,tables:{},scores:{},tab:'setup',warn:[],notice:''};
+try{const x=localStorage.getItem('bt');if(x)S=Object.assign(S,JSON.parse(x))}catch(e){}
+const save=()=>{try{localStorage.setItem('bt',JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=t=>String(t).split('+').map(p=>p.trim()).filter(Boolean).join('+');
+const key=(p,a,b)=>p+'|'+a+'|'+b;
+const sc=k=>S.scores[k]||['',''];
+const names=()=>Object.keys(S.tables);
+function valid(a,b){
+  if(a===''||b===''||a==null||b==null)return null;
+  a=+a;b=+b;
+  if(!Number.isInteger(a)||!Number.isInteger(b)||a<0||b<0)return false;
+  const h=Math.max(a,b),l=Math.min(a,b);
+  if(h===30)return l===28||l===29;
+  if(h===21)return l<=19;
+  if(h>21&&h<30)return h-l===2;
+  return false;
+}
+function loadRaw(){
+  const raw=$('#raw').value;S.raw=raw;S.warn=[];
+  let obj;
+  try{obj=JSON.parse(raw)}catch(e){S.warn.push('Invalid JSON: '+e.message);S.tables={};return render()}
+  if(obj&&obj.tables&&obj.scores){S.tables=obj.tables;S.scores=obj.scores;S.tab='tables';S.notice='Tournament backup restored.';return render()}
+  const T={},seen=new Set();
+  for(const m of raw.matchAll(/"([^"]+)"\s*:\s*\[([^\]]*)\]/g)){
+    let k=m[1];
+    if(T[k]){
+      const o=k;const r=k.match(/^(.*?)(\d+)$/);
+      let n=r?+r[2]:1;const base=r?r[1]:k+' ';
+      do{n++;k=base+n}while(T[k]);
+      S.warn.push('Duplicate key "'+o+'" was renamed to "'+k+'".');
+    }
+    let arr=[];try{arr=JSON.parse('['+m[2]+']')}catch(e){}
+    T[k]=[];
+    arr.map(norm).filter(Boolean).forEach(t=>{
+      if(seen.has(t.toLowerCase())){S.warn.push('Team "'+t+'" appears more than once and was skipped the second time.');return}
+      seen.add(t.toLowerCase());T[k].push(t);
+    });
+    if(T[k].length<2)S.warn.push(k+' needs at least 2 teams.');
+  }
+  if(Object.keys(T).length<2)S.warn.push('Add at least 2 tables to build a knockout bracket.');
+  S.tables=T;S.scores={};render();
+}
+function rr(t){const T=S.tables[t],m=[];for(let i=0;i<T.length;i++)for(let j=i+1;j<T.length;j++)m.push([T[i],T[j]]);return m}
+function stand(t){
+  const R={};S.tables[t].forEach(n=>R[n]={n,p:0,w:0,pf:0,pa:0,h:{}});
+  rr(t).forEach(([a,b])=>{
+    const s=sc(key('rr',a,b));if(valid(s[0],s[1])!==true)return;
+    const x=+s[0],y=+s[1];
+    R[a].p++;R[b].p++;R[a].pf+=x;R[a].pa+=y;R[b].pf+=y;R[b].pa+=x;
+    if(x>y){R[a].w++;R[a].h[b]=1}else{R[b].w++;R[b].h[a]=1}
+  });
+  const L=Object.values(R);
+  L.forEach(r=>{r.d=r.pf-r.pa;r.pct=r.pf+r.pa?r.pf/(r.pf+r.pa)*100:0;r.t=t});
+  L.sort((a,b)=>b.w-a.w||b.pf-a.pf||b.pct-a.pct||((b.h[a.n]?1:0)-(a.h[b.n]?1:0))||a.n.localeCompare(b.n));
+  return L;
+}
+const done=()=>names().length>0&&names().every(t=>S.tables[t].length>=2&&rr(t).every(([a,b])=>{const s=sc(key('rr',a,b));return valid(s[0],s[1])===true}));
+function quals(){
+  const N=names(),st=N.map(t=>stand(t));
+  const th=st.map(x=>x[2]).filter(Boolean).sort((a,b)=>b.pf-a.pf||b.pct-a.pct||b.w-a.w);
+  return{N,st,f:st.map(x=>x[0]),s:st.map(x=>x[1]),th,t:th.slice(0,2)};
+}
+function seedOrder(size){let a=[1,2];while(a.length<size){const next=a.length*2+1;a=a.flatMap(n=>[n,next-n])}return a}
+function round1(Q){
+  const n=Q.N.length,A=i=>Q.f[i]&&Q.f[i].n,B=i=>Q.s[i]&&Q.s[i].n;
+  if(n===3&&Q.t.length===2)return [[A(0),B(1)],[A(1),B(2)],[A(2),B(0)],[Q.t[0].n,Q.t[1].n]].map(([a,b])=>({a,b}));
+  const teams=[...Q.f,...Q.s,...Q.t].map(r=>r&&r.n).filter(Boolean),size=2**Math.ceil(Math.log2(Math.max(2,teams.length)));
+  const slots=seedOrder(size).map(seed=>teams[seed-1]||null),m=[];
+  for(let i=0;i<slots.length;i+=2){const a=slots[i],b=slots[i+1];m.push(a&&b?{a,b}:{bye:true,a:a||b})}
+  return m;
+}
+function bracket(Q){
+  let cur=round1(Q),rounds=[];
+  for(;;){
+    cur.forEach(m=>{
+      if(m.bye){m.w=m.a;return}
+      m.w=null;m.v=null;
+      if(m.a&&m.b){const s=sc(key('ko',m.a,m.b)),v=valid(s[0],s[1]);m.v=v;if(v===true)m.w=+s[0]>+s[1]?m.a:m.b}
+    });
+    rounds.push(cur);
+    if(cur.length<2)break;
+    const nx=[];
+    for(let i=0;i<cur.length;i+=2)nx.push(i+1<cur.length?{a:cur[i].w,b:cur[i+1].w}:{bye:true,a:cur[i].w});
+    cur=nx;
+  }
+  return rounds;
+}
+function mrow(p,a,b){
+  const s=sc(key(p,a,b)),v=valid(s[0],s[1]),w=v===true?(+s[0]>+s[1]?0:1):-1,k=esc(key(p,a,b));
+  const line=(n,i)=>`<div class="l ${w===i?'w':''}"><span>${esc(n)}</span><input inputmode="numeric" aria-label="Score for ${esc(n)}" value="${esc(s[i])}" data-k="${k}" data-i="${i}" onchange="setS(this)"></div>`;
+  return `<div class="m ${v===false?'bad':''}">${line(a,0)}${line(b,1)}${v===false?'<div class="err">Not a valid final score. Win at 21 by 2, or 30-29 at most.</div>':''}</div>`;
+}
+function qualSig(){return done()?quals().f.concat(quals().s,quals().t).map(r=>r.t+':'+r.n).sort().join('|'):''}
+function clearKo(){Object.keys(S.scores).forEach(k=>{if(k.startsWith('ko|'))delete S.scores[k]})}
+function setS(el){
+  const k=el.dataset.k,old=(S.scores[k]||['','']).slice(),before=qualSig(),s=old.slice();s[+el.dataset.i]=el.value.trim();S.scores[k]=s;
+  if(k.startsWith('rr|')&&Object.keys(S.scores).some(x=>x.startsWith('ko|'))&&before!==qualSig()){
+    if(!confirm('This edit changes who advances. Clear all later bracket results and continue?')){S.scores[k]=old;return render()}
+    clearKo();S.notice='Bracket scores were cleared because the qualifiers changed.';
+  }
+  render()
+}
+function randScore(){
+  const l=Math.random()<.15?20+Math.floor(Math.random()*9):4+Math.floor(Math.random()*16),w=l>=20?l+2:21;
+  return (Math.random()<.5?[w,l]:[l,w]).map(String);
+}
+function demoTables(){names().forEach(t=>rr(t).forEach(([a,b])=>{S.scores[key('rr',a,b)]=randScore()}));render()}
+function demoKo(){
+  for(let i=0;i<8;i++){
+    bracket(quals()).flat().forEach(m=>{if(!m.bye&&m.a&&m.b&&m.v===null)S.scores[key('ko',m.a,m.b)]=randScore()});
+  }
+  render();
+}
+function resetAll(){if(confirm('Clear all scores and tables?')){S.tables={};S.scores={};S.warn=[];S.notice='';S.raw=SAMPLE;S.tab='setup';render()}}
+const empty='<p class="note">Load a tournament in the Setup tab first.</p>';
+function vSetup(){
+  return `<div class="card"><h2>Tournament data</h2>
+  <p class="note">Paste a JSON object. Each key is a table and each value is a list of doubles teams.</p>
+  <textarea id="raw" spellcheck="false" aria-label="Tournament JSON">${esc(S.raw)}</textarea>
+  ${S.warn.map(w=>`<div class="warn">${esc(w)}</div>`).join('')}
+  <button class="btn p" onclick="loadRaw()">Load tournament</button>
+  <button class="btn" onclick="$('#file').click()">Upload JSON</button>
+  <button class="btn" onclick="S.raw=SAMPLE;render()">Use sample</button>
+  <button class="btn" onclick="resetAll()">Reset everything</button></div>
+  ${names().length?`<div class="card"><h2>Loaded</h2>${names().map(t=>`<p><b>${esc(t)}</b>: ${S.tables[t].map(esc).join(', ')}</p>`).join('')}
+  <button class="btn" onclick="go('tables')">Go to tables</button>
+  <button class="btn" onclick="demoTables()">Fill table scores randomly (demo)</button></div>`:''}`;
+}
+function vTables(){
+  if(!names().length)return empty;
+  const wilds=new Set(quals().t.map(r=>r.n));
+  return names().map(t=>{
+    const L=stand(t);
+    return `<section class="card"><h2>${esc(t)}</h2><div class="sc"><table><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>Total score</th><th>Against</th><th>Diff</th><th>%</th></tr>
+    ${L.map((r,i)=>`<tr class="${i<2?'q':i===2&&wilds.has(r.n)?'wild':i===2?'t':''}"><td>${i+1}</td><td>${esc(r.n)}${i===2&&wilds.has(r.n)?'<span class="tag wild">best 3rd</span>':''}</td><td>${r.p}</td><td>${r.w}</td><td><b>${r.pf}</b></td><td>${r.pa}</td><td>${r.d>0?'+':''}${r.d}</td><td>${r.pct.toFixed(1)}</td></tr>`).join('')}</table></div>
+    <div class="grid">${rr(t).map(([a,b])=>mrow('rr',a,b)).join('')}</div></section>`;
+  }).join('');
+}
+function vQual(){
+  if(!names().length)return empty;
+  const Q=quals(),d=done();
+  const tbl=(rows)=>`<div class="sc"><table><tr><th>#</th><th>Team</th><th>Table</th><th>Total score</th><th>%</th><th>W</th></tr>${rows}</table></div>`;
+  const top=Q.N.map((t,i)=>[Q.f[i],Q.s[i]]).map(([f,s],i)=>`<tr class="q"><td>1</td><td>${f?esc(f.n):'-'}<span class="tag">in</span></td><td>${esc(Q.N[i])}</td><td>${f?f.pf:0}</td><td>${f?f.pct.toFixed(1):0}</td><td>${f?f.w:0}</td></tr><tr class="q"><td>2</td><td>${s?esc(s.n):'-'}<span class="tag">in</span></td><td>${esc(Q.N[i])}</td><td>${s?s.pf:0}</td><td>${s?s.pct.toFixed(1):0}</td><td>${s?s.w:0}</td></tr>`).join('');
+  return `${d?'':'<div class="warn">Provisional. Final once every table match has a valid score.</div>'}
+  <section class="card"><h2>1st and 2nd of each table</h2>${tbl(top)}</section>
+  <section class="card"><h2>Best 3rd-placed teams</h2><p class="note">Ranked by total score across all tables. The top 2 advance. Percentage is shown for comparison.</p>
+  ${Q.th.length?tbl(Q.th.map((r,i)=>`<tr class="${i<2?'wild':''}"><td>${i+1}</td><td>${esc(r.n)}${i<2?'<span class="tag wild">best 3rd</span>':'<span class="tag out">out</span>'}</td><td>${esc(r.t)}</td><td><b>${r.pf}</b></td><td>${r.pct.toFixed(1)}</td><td>${r.w}</td></tr>`).join('')):'<p class="note">No table has a 3rd-placed team.</p>'}</section>`;
+}
+function champ(R){
+  const f=R[R.length-1][0];
+  return f&&f.w?`<div class="champ">Champions<b>${esc(f.w)}</b></div>`:'';
+}
+function vBracket(){
+  if(!names().length)return empty;
+  if(names().length<2)return '<div class="warn">A bracket needs at least 2 tables.</div>';
+  if(!done())return '<p class="note">The bracket opens once every table match has a valid score. Finish the Tables tab first.</p>';
+  const R=bracket(quals()),L=R.length;
+  const nm=i=>i===L-1?'Final':i===L-2?'Semifinals':i===L-3?'Quarterfinals':'Round '+(i+1);
+  return champ(R)+`<button class="btn" onclick="demoKo()">Fill bracket scores randomly (demo)</button><div class="br" style="margin-top:12px">${R.map((r,i)=>`<div class="rd"><h3>${nm(i)}</h3>${r.map(m=>
+    m.bye?`<div class="m"><div class="l w"><span>${m.a?esc(m.a):'TBD'}</span></div><div class="err" style="color:var(--mu)">Bye</div></div>`
+    :(m.a&&m.b)?mrow('ko',m.a,m.b)
+    :`<div class="m"><div class="l tbd"><span>${m.a?esc(m.a):'TBD'}</span></div><div class="l tbd"><span>${m.b?esc(m.b):'TBD'}</span></div></div>`).join('')}</div>`).join('')}</div>`;
+}
+function vSummary(){
+  if(!names().length)return empty;
+  const ok=done()&&names().length>1;let R=null,c='';
+  if(ok){R=bracket(quals());c=champ(R)}
+  const fin=R&&R[R.length-1][0],ru=fin&&fin.w?(fin.w===fin.a?fin.b:fin.a):null;
+  const data=JSON.stringify({tables:S.tables,scores:S.scores});
+  const results=R?R.flatMap((round,ri)=>round.filter(m=>m.a||m.b).map((m,mi)=>`<tr><td>${ri+1}.${mi+1}</td><td>${esc(m.w||'Pending')}</td><td>${m.b?esc((sc(key('ko',m.a,m.b))).join('–')):'Bye'}</td></tr>`)).join(''):'';
+  return `${c||'<p class="note">The champion appears here once the final is played.</p>'}
+  ${ru?`<div class="card"><h2>Runner-up</h2><p>${esc(ru)}</p></div>`:''}
+  <div class="card"><h2>Table standings</h2>${names().map(t=>`<p><b>${esc(t)}</b>: ${stand(t).map(r=>esc(r.n)+' ('+r.pf+')').join(', ')}</p>`).join('')}</div>
+  ${results?`<div class="card"><h2>Bracket results</h2><div class="sc"><table><tr><th>Match</th><th>Winner</th><th>Score</th></tr>${results}</table></div></div>`:''}
+  <div class="card"><h2>Export</h2><p class="note">Copy this text and paste it into the Setup box later to restore the tournament.</p>
+  <textarea readonly aria-label="Export JSON">${esc(data)}</textarea>
+  <button class="btn p" onclick="copyEx()">Copy</button><button class="btn" onclick="downloadEx()">Download JSON</button><button class="btn" onclick="print()">Print summary</button></div>`;
+}
+function copyEx(){try{navigator.clipboard.writeText(JSON.stringify({tables:S.tables,scores:S.scores}))}catch(e){document.querySelector('textarea[readonly]').select()}}
+function downloadEx(){const b=new Blob([JSON.stringify({tables:S.tables,scores:S.scores},null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='badminton-tournament-results.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),500)}
+function go(t){S.tab=t;render();scrollTo(0,0)}
+function render(){
+  const tabs=['setup','tables','qualifiers','bracket','summary'];
+  $('#nav').innerHTML=tabs.map(t=>`<button class="${S.tab===t?'on':''}" aria-current="${S.tab===t?'page':'false'}" onclick="go('${t}')">${t[0].toUpperCase()+t.slice(1)}</button>`).join('');
+  $('#main').innerHTML=(S.notice?`<div class="warn" style="background:var(--ok);color:var(--g)">${esc(S.notice)}</div>`:'')+({setup:vSetup,tables:vTables,qualifiers:vQual,bracket:vBracket,summary:vSummary}[S.tab]||vSetup)();S.notice='';
+  save();
+}
+$('#file').addEventListener('change',async e=>{const f=e.target.files[0];if(f){S.raw=await f.text();S.tab='setup';render();setTimeout(loadRaw)}e.target.value=''});
+render();
+</script></body></html>
