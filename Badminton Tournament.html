@@ -221,6 +221,7 @@ function stepScore(button,delta){
   updateDragScore(control,value===''?0:Number(value)+delta);
 }
 function scoreKey(event,control){
+  if(event.key==='Enter'||event.key===' '){event.preventDefault();updateDragScore(control,21);return}
   const increments={ArrowUp:1,ArrowRight:1,ArrowDown:-1,ArrowLeft:-1};
   if(event.key in increments){event.preventDefault();const old=sc(control.dataset.k)[+control.dataset.i];updateDragScore(control,old===''?0:Number(old)+increments[event.key])}
 }
@@ -229,15 +230,17 @@ function startScoreDrag(event,control){
   event.preventDefault();control.focus({preventScroll:true});
   control.setPointerCapture(event.pointerId);
   const origin=event.clientY,initial=Number(sc(control.dataset.k)[+control.dataset.i]||0);
-  let last=null;
+  let last=null,moved=false;
   const move=e=>{
     if(e.pointerId!==event.pointerId)return;
+    if(Math.abs(origin-e.clientY)>5||Math.abs(event.clientX-e.clientX)>5)moved=true;
     const steps=Math.trunc((origin-e.clientY)/12);
     if(steps===last||steps===0&&last===null)return;
     last=steps;updateDragScore(control,initial+steps);
   };
   const finish=e=>{
     if(e.pointerId!==event.pointerId)return;
+    if(e.type==='pointerup'&&!moved&&Math.abs(origin-e.clientY)<=5&&Math.abs(event.clientX-e.clientX)<=5)updateDragScore(control,21);
     control.removeEventListener('pointermove',move);
     control.removeEventListener('pointerup',finish);
     control.removeEventListener('pointercancel',finish);
