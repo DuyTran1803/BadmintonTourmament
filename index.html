@@ -146,18 +146,18 @@ function bracket(Q){
 }
 function mrow(p,a,b){
   const s=sc(key(p,a,b)),v=valid(s[0],s[1]),w=v===true?(+s[0]>+s[1]?0:1):-1,k=esc(key(p,a,b));
-  const line=(n,i)=>`<div class="l ${w===i?'w':''}"><span>${esc(n)}</span><input inputmode="numeric" aria-label="Score for ${esc(n)}" value="${esc(s[i])}" data-k="${k}" data-i="${i}" onchange="setS(this)"></div>`;
+  const line=(n,i)=>`<div class="l ${w===i?'w':''}"><span>${esc(n)}</span><input inputmode="numeric" aria-label="Score for ${esc(n)}" value="${esc(s[i])}" data-k="${k}" data-i="${i}" oninput="setS(this,false)" onchange="setS(this)"></div>`;
   return `<div class="m ${v===false?'bad':''}">${line(a,0)}${line(b,1)}${v===false?'<div class="err">Not a valid final score. Win at 21 by 2, or 30-29 at most.</div>':''}</div>`;
 }
 function qualSig(){return done()?quals().f.concat(quals().s,quals().t).map(r=>r.t+':'+r.n).sort().join('|'):''}
 function clearKo(){Object.keys(S.scores).forEach(k=>{if(k.startsWith('ko|'))delete S.scores[k]})}
-function setS(el){
+function setS(el,redraw=true){
   const k=el.dataset.k,old=(S.scores[k]||['','']).slice(),before=qualSig(),s=old.slice();s[+el.dataset.i]=el.value.trim();S.scores[k]=s;
   if(k.startsWith('rr|')&&Object.keys(S.scores).some(x=>x.startsWith('ko|'))&&before!==qualSig()){
     if(!confirm('This edit changes who advances. Clear all later bracket results and continue?')){S.scores[k]=old;return render()}
     clearKo();S.notice='Bracket scores were cleared because the qualifiers changed.';
   }
-  render()
+  if(redraw)render();else save();
 }
 function randScore(){
   const l=Math.random()<.15?20+Math.floor(Math.random()*9):4+Math.floor(Math.random()*16),w=l>=20?l+2:21;
