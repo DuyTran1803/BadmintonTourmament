@@ -173,6 +173,10 @@ function demoKo(){
   }
   render();
 }
+function resetTournamentScores(){
+  if(!confirm('Reset all table and knockout scores? Your tournament JSON and teams will be kept.'))return;
+  S.scores={};S.notice='All scores reset. Tournament teams and JSON kept.';render();
+}
 function resetAll(){if(confirm('Clear all scores and tables?')){S.tables={};S.scores={};S.warn=[];S.notice='';S.raw=SAMPLE;S.tab='setup';render()}}
 const empty='<p class="note">Load a tournament in the Setup tab first.</p>';
 function vSetup(){
@@ -183,7 +187,7 @@ function vSetup(){
   <button class="btn p" onclick="loadRaw()">Load tournament</button>
   <button class="btn" onclick="$('#file').click()">Upload JSON</button>
   <button class="btn" onclick="S.raw=SAMPLE;render()">Use sample</button>
-  <button class="btn" onclick="resetAll()">Reset everything</button></div>
+  <button class="btn" onclick="resetTournamentScores()">Reset tournament scores</button><button class="btn" onclick="resetAll()">Reset everything</button></div>
   ${names().length?`<div class="card"><h2>Loaded</h2>${names().map(t=>`<p><b>${esc(t)}</b>: ${S.tables[t].map(esc).join(', ')}</p>`).join('')}
   <button class="btn" onclick="go('tables')">Go to tables</button>
   <button class="btn" onclick="demoTables()">Fill table scores randomly (demo)</button></div>`:''}`;
@@ -213,7 +217,7 @@ function filterScoreRows(){
 function vTables(){
   if(!names().length)return empty;
   const wilds=new Set(quals().t.map(r=>r.n));
-  return `<div class="card"><label for="team-search"><b>Find team scores</b></label><input id="team-search" class="team-search" type="search" placeholder="Search team or player name…" value="${esc(S.teamSearch||'')}" oninput="searchScores(this.value)"><p id="search-status" role="status"></p></div>`+names().map(t=>{
+  return `<div class="card"><button class="btn" onclick="resetTournamentScores()">Reset tournament scores</button><br><label for="team-search"><b>Find team scores</b></label><input id="team-search" class="team-search" type="search" placeholder="Search team or player name…" value="${esc(S.teamSearch||'')}" oninput="searchScores(this.value)"><p id="search-status" role="status"></p></div>`+names().map(t=>{
     const L=stand(t);
     return `<section class="card" data-score-table><h2>${esc(t)}</h2><div class="sc"><table><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>Total score</th><th>Against</th><th>Diff</th><th>%</th></tr>
     ${L.map((r,i)=>`<tr class="${i<2?'q':i===2&&wilds.has(r.n)?'wild':i===2?'t':''}"><td>${i+1}</td><td>${esc(r.n)}${i===2&&wilds.has(r.n)?'<span class="tag wild">best 3rd</span>':''}</td><td>${r.p}</td><td>${r.w}</td><td><b>${r.pf}</b></td><td>${r.pa}</td><td>${r.d>0?'+':''}${r.d}</td><td>${r.pct.toFixed(1)}</td></tr>`).join('')}</table></div>
