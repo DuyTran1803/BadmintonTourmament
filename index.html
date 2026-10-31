@@ -280,7 +280,7 @@ function vSetup(){
   <button class="btn" onclick="resetTournamentScores()">Reset tournament scores</button><button class="btn" onclick="resetAll()">Reset everything</button></div>
   ${names().length?`<div class="card"><h2>Loaded</h2>${names().map(t=>`<p><b>${esc(t)}</b>: ${S.tables[t].map(esc).join(', ')}</p>`).join('')}
   <button class="btn" onclick="go('tables')">Go to tables</button>
-  <button class="btn" onclick="demoTables()">Fill table scores randomly (demo)</button></div>`:''}`;
+  <button class="btn" onclick="demoTables()">Fill table scores randomly (demo)</button>${done()&&names().length>1?'<button class="btn" onclick="demoKo()">Fill bracket scores randomly (demo)</button>':''}</div>`:''}`;
 }
 function rememberScoreSection(el){
   if(!el.closest('#main')||(S.teamSearch||'').trim())return;
@@ -348,7 +348,7 @@ function vBracket(){
   const R=bracket(quals()),L=R.length;
   const selected=Math.max(0,Math.min(L-1,Number(S.bracketRound)||0));
   const nm=i=>i===L-1?'Final':i===L-2?'Semifinals':i===L-3?'Quarterfinals':'Round '+(i+1);
-  return champ(R)+`<button class="btn" onclick="demoKo()">Fill bracket scores randomly (demo)</button><div class="round-tabs" role="tablist" aria-label="Bracket rounds">${R.map((r,i)=>`<button type="button" role="tab" id="round-tab-${i}" aria-controls="round-panel-${i}" aria-selected="${i===selected}" class="${i===selected?'active':''}" onclick="goBracketRound(${i})" onkeydown="roundTabKey(event,${i},${L})">${nm(i)}</button>`).join('')}</div><div class="br round-panels" style="margin-top:12px">${R.map((r,i)=>`<div class="rd" role="tabpanel" id="round-panel-${i}" aria-labelledby="round-tab-${i}" ${i===selected?'':'hidden'}><h3>${nm(i)}</h3>${r.map(m=>
+  return champ(R)+`<div class="round-tabs" role="tablist" aria-label="Bracket rounds">${R.map((r,i)=>`<button type="button" role="tab" id="round-tab-${i}" aria-controls="round-panel-${i}" aria-selected="${i===selected}" class="${i===selected?'active':''}" onclick="goBracketRound(${i})" onkeydown="roundTabKey(event,${i},${L})">${nm(i)}</button>`).join('')}</div><div class="br round-panels" style="margin-top:12px">${R.map((r,i)=>`<div class="rd" role="tabpanel" id="round-panel-${i}" aria-labelledby="round-tab-${i}" ${i===selected?'':'hidden'}><h3>${nm(i)}</h3>${r.map(m=>
     m.bye?`<div class="m"><div class="l w"><span>${m.a?esc(m.a):'TBD'}</span></div><div class="err" style="color:var(--mu)">Bye</div></div>`
     :(m.a&&m.b)?mrow('ko',m.a,m.b)
     :`<div class="m"><div class="l tbd"><span>${m.a?esc(m.a):'TBD'}</span></div><div class="l tbd"><span>${m.b?esc(m.b):'TBD'}</span></div></div>`).join('')}</div>`).join('')}</div>`;
