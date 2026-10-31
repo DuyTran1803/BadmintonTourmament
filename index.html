@@ -245,7 +245,7 @@ function render(){
   save();
 }
 $('#file').addEventListener('change',async e=>{const f=e.target.files[0];if(f){S.raw=await f.text();S.tab='setup';render();setTimeout(loadRaw)}e.target.value=''});
-// Adjacent sections track the finger; release beyond 30% to commit.
+// Adjacent sections track the finger; a short horizontal swipe changes tabs.
 const swipeTabs=['setup','tables','qualifiers','bracket','summary'];
 let swipeStart=null,swipeLayer=null,swipeBusy=false;
 function clearSwipe(){
@@ -304,7 +304,7 @@ document.addEventListener('touchend',e=>{
   if(e.touches.length||!e.changedTouches.length||st.axis!=='x'){clearSwipe();return}
   const dx=e.changedTouches[0].clientX-st.x,next=swipeFrame(dx);
   if(next===null){clearSwipe();return}
-  const commit=Math.abs(dx)>st.width*.3;
+  const commit=Math.abs(dx)>=24;
   const end=commit?-st.dir*st.width:0;
   swipeBusy=true;
   const duration=matchMedia('(prefers-reduced-motion: reduce)').matches?0:200;
