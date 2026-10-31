@@ -49,7 +49,7 @@ input,select{width:76px;min-height:48px;font:inherit;font-size:19px;font-weight:
 @media(max-width:560px){main{padding:12px}.card{padding:12px}.grid{grid-template-columns:1fr}.rd{flex-basis:84vw}th,td{padding:7px 6px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 @media print{header,.btn{display:none!important}.card{box-shadow:none;break-inside:avoid}.br{overflow:visible}.rd{flex-basis:24%}}
-details.score-entry{margin-top:14px;border-top:1px solid var(--ln)}details.score-entry summary{cursor:pointer;min-height:44px;padding:12px 0;font-weight:700}input.team-search{width:100%;font-size:16px;text-align:left;font-weight:400}[hidden]{display:none!important}.team-search-card{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.12)}@media print{.team-search-card{position:static;box-shadow:none}}.missing-score-badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 7px;margin-left:6px;border-radius:999px;background:#c62828;color:#fff;font-size:13px;font-weight:800;vertical-align:middle}.missing-score-badge.complete{background:#167342;color:#fff}#search-status:empty{display:none}.match-score>summary{cursor:pointer;padding:8px 0;min-height:44px}.match-summary{display:inline-flex;vertical-align:middle;flex-direction:column;width:calc(100% - 24px);gap:5px}.match-summary>span{display:flex;justify-content:space-between;gap:12px;overflow-wrap:anywhere}.match-summary b{font-variant-numeric:tabular-nums;flex-shrink:0}.match-score-fields{border-top:1px solid var(--ln);padding-top:4px}@keyframes savedMatch{0%,65%{background:var(--ok);box-shadow:0 0 0 2px var(--g)}100%{background:var(--card);box-shadow:0 0 0 0 transparent}}.match-score.score-saved{animation:savedMatch 2s ease-out}.match-score{overflow-anchor:none}</style></head><body>
+details.score-entry{margin-top:14px;border-top:1px solid var(--ln)}details.score-entry summary{cursor:pointer;min-height:44px;padding:12px 0;font-weight:700}input.team-search{width:100%;font-size:16px;text-align:left;font-weight:400}[hidden]{display:none!important}.team-search-card{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.12)}@media print{.team-search-card{position:static;box-shadow:none}}.missing-score-badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 7px;margin-left:6px;border-radius:999px;background:#c62828;color:#fff;font-size:13px;font-weight:800;vertical-align:middle}.missing-score-badge.complete{background:#167342;color:#fff}#search-status:empty{display:none}.match-score>summary{cursor:pointer;padding:8px 0;min-height:44px}.match-summary{display:inline-flex;vertical-align:middle;flex-direction:column;width:calc(100% - 24px);gap:5px}.match-summary>span{display:flex;justify-content:space-between;gap:12px;overflow-wrap:anywhere}.match-summary b{font-variant-numeric:tabular-nums;flex-shrink:0}.match-score-fields{border-top:1px solid var(--ln);padding-top:4px}@keyframes savedMatch{0%,65%{background:var(--ok);box-shadow:0 0 0 2px var(--g)}100%{background:var(--card);box-shadow:0 0 0 0 transparent}}.match-score.score-saved{animation:savedMatch 2s ease-out}.match-score{overflow-anchor:none}.score-stepper{display:flex;align-items:center;gap:4px;flex-shrink:0}.score-stepper button{min-width:40px;min-height:48px;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--tx);font-size:24px;cursor:pointer}.score-stepper .score-drag{width:64px;min-height:70px;touch-action:none;user-select:none;cursor:ns-resize;display:flex;flex-direction:column;align-items:center;justify-content:center}.score-drag b{font-size:28px}.score-drag small{font-size:11px;color:var(--mu)}.score-drag:active{background:var(--ok);border-color:var(--g)}</style></head><body>
 <header><h1>Badminton Tournament</h1><nav id="nav" aria-label="Tournament sections"></nav></header>
 <main id="main"></main>
 <input class="sr" id="file" type="file" accept="application/json,.json">
@@ -149,9 +149,9 @@ function bracket(Q){
 }
 function mrow(p,a,b){
   const s=sc(key(p,a,b)),v=valid(s[0],s[1]),w=v===true?(+s[0]>+s[1]?0:1):-1,k=esc(key(p,a,b));
-  const line=(n,i)=>`<div class="l ${w===i?'w':''}"><span>${esc(n)}</span><input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" aria-label="Score for ${esc(n)}" value="${esc(s[i])}" data-k="${k}" data-i="${i}" oninput="this.value=this.value.replace(/[^0-9]/g,'');setS(this,false)" onchange="setS(this)"></div>`;
+  const line=(n,i)=>`<div class="l ${w===i?'w':''}"><span>${esc(n)}</span><div class="score-stepper"><button type="button" aria-label="Decrease score for ${esc(n)}" onclick="stepScore(this,-1)">−</button><button type="button" class="score-drag" role="slider" aria-label="Score for ${esc(n)}. Drag up or down" aria-valuemin="0" aria-valuemax="30" aria-valuenow="${s[i]===''?0:esc(s[i])}" data-k="${k}" data-i="${i}" onpointerdown="startScoreDrag(event,this)" onkeydown="scoreKey(event,this)"><b>${esc(s[i]||'—')}</b><small>↕ drag</small></button><button type="button" aria-label="Increase score for ${esc(n)}" onclick="stepScore(this,1)">+</button></div></div>`;
   const complete=s.every(value=>value!=null&&String(value).trim()!=='');
-  return `<details data-match-key="${k}" class="m match-score ${v===false?'bad':''}" ${complete?'':'open'}><summary><span class="match-summary"><span>${esc(a)} <b>${esc(s[0]||'—')}</b></span><span>${esc(b)} <b>${esc(s[1]||'—')}</b></span></span>${v===false?'<span class="err">Check score</span>':''}</summary><div class="match-score-fields">${line(a,0)}${line(b,1)}${v===false?'<div class="err">Not a valid final score. Win at 21 by 2, or 30-29 at most.</div>':''}</div></details>`;
+  return `<details data-match-key="${k}" class="m match-score ${v===false?'bad':''}" ${complete?'':'open'}><summary><span class="match-summary"><span>${esc(a)} <b>${esc(s[0]||'—')}</b></span><span>${esc(b)} <b>${esc(s[1]||'—')}</b></span></span>${v===false?'<span class="err">Check score</span>':''}</summary><div class="match-score-fields">${line(a,0)}${line(b,1)}<button class="btn p" onclick="refreshSavedMatch(this.closest(\'[data-match-key]\').dataset.matchKey)">Done</button>${v===false?'<div class="err">Not a valid final score. Win at 21 by 2, or 30-29 at most.</div>':''}</div></details>`;
 }
 function qualSig(){return done()?quals().f.concat(quals().s,quals().t).map(r=>r.t+':'+r.n).sort().join('|'):''}
 function clearKo(){Object.keys(S.scores).forEach(k=>{if(k.startsWith('ko|'))delete S.scores[k]})}
@@ -198,6 +198,57 @@ function refreshSavedMatch(k){
     }
   },0);
 }
+
+function updateDragScore(control,value){
+  value=Math.max(0,Math.min(30,value));
+  setS({dataset:control.dataset,value:String(value)},false);
+  if(!control.isConnected)return;
+  const saved=sc(control.dataset.k)[+control.dataset.i];
+  control.querySelector('b').textContent=saved===''?'—':saved;
+  control.setAttribute('aria-valuenow',saved===''?0:saved);
+  const match=control.closest('[data-match-key]');
+  const scores=sc(control.dataset.k);
+  match.querySelectorAll('.match-summary b').forEach((el,i)=>el.textContent=scores[i]===''?'—':scores[i]);
+  match.classList.toggle('bad',valid(scores[0],scores[1])===false);
+  const table=control.closest('[data-score-table]');
+  if(table){
+    const badge=table.querySelector('.missing-score-badge'),name=table.querySelector('details.score-entry').dataset.table;
+    const count=missingScores(name);badge.textContent=count;badge.classList.toggle('complete',count===0);badge.setAttribute('aria-label',count+' matches missing scores');
+  }
+}
+function stepScore(button,delta){
+  const control=button.parentElement.querySelector('.score-drag'),value=sc(control.dataset.k)[+control.dataset.i];
+  updateDragScore(control,value===''?0:Number(value)+delta);
+}
+function scoreKey(event,control){
+  const increments={ArrowUp:1,ArrowRight:1,ArrowDown:-1,ArrowLeft:-1};
+  if(event.key in increments){event.preventDefault();const old=sc(control.dataset.k)[+control.dataset.i];updateDragScore(control,old===''?0:Number(old)+increments[event.key])}
+}
+function startScoreDrag(event,control){
+  if(!event.isPrimary||event.button!==0)return;
+  event.preventDefault();control.focus({preventScroll:true});
+  control.setPointerCapture(event.pointerId);
+  const origin=event.clientY,initial=Number(sc(control.dataset.k)[+control.dataset.i]||0);
+  let last=null;
+  const move=e=>{
+    if(e.pointerId!==event.pointerId)return;
+    const steps=Math.trunc((origin-e.clientY)/12);
+    if(steps===last||steps===0&&last===null)return;
+    last=steps;updateDragScore(control,initial+steps);
+  };
+  const finish=e=>{
+    if(e.pointerId!==event.pointerId)return;
+    control.removeEventListener('pointermove',move);
+    control.removeEventListener('pointerup',finish);
+    control.removeEventListener('pointercancel',finish);
+    control.removeEventListener('lostpointercapture',finish);
+  };
+  control.addEventListener('pointermove',move);
+  control.addEventListener('pointerup',finish);
+  control.addEventListener('pointercancel',finish);
+  control.addEventListener('lostpointercapture',finish);
+}
+
 function randScore(){
   const l=Math.random()<.15?20+Math.floor(Math.random()*9):4+Math.floor(Math.random()*16),w=l>=20?l+2:21;
   return (Math.random()<.5?[w,l]:[l,w]).map(String);
