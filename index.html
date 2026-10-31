@@ -149,7 +149,7 @@ function bracket(Q){
 }
 function mrow(p,a,b){
   const s=sc(key(p,a,b)),v=valid(s[0],s[1]),w=v===true?(+s[0]>+s[1]?0:1):-1,k=esc(key(p,a,b));
-  const line=(n,i)=>`<div class="l ${w===i?'w':''}"><span>${esc(n)}</span><div class="score-stepper"><button type="button" aria-label="Decrease score for ${esc(n)}" onclick="stepScore(this,-1)">−</button><button type="button" class="score-drag" role="slider" aria-label="Score for ${esc(n)}. Drag up or down" aria-valuemin="0" aria-valuemax="21" aria-valuenow="${s[i]===''?0:esc(s[i])}" data-k="${k}" data-i="${i}" onpointerdown="startScoreDrag(event,this)" onkeydown="scoreKey(event,this)"><b>${esc(s[i]||'—')}</b></button><button type="button" aria-label="Increase score for ${esc(n)}" onclick="stepScore(this,1)">+</button></div></div>`;
+  const line=(n,i)=>`<div class="l ${w===i?'w':''}"><span>${esc(n)}</span><div class="score-stepper"><button type="button" aria-label="Decrease score for ${esc(n)}" onclick="stepScore(this,-1)">−</button><button type="button" class="score-drag" role="slider" aria-label="Score for ${esc(n)}. Drag up or down" aria-valuemin="0" aria-valuemax="50" aria-valuenow="${s[i]===''?0:esc(s[i])}" data-k="${k}" data-i="${i}" onpointerdown="startScoreDrag(event,this)" onkeydown="scoreKey(event,this)"><b>${esc(s[i]||'—')}</b></button><button type="button" aria-label="Increase score for ${esc(n)}" onclick="stepScore(this,1)">+</button></div></div>`;
   const complete=s.every(value=>value!=null&&String(value).trim()!=='');
   return `<details data-match-key="${k}" class="m match-score ${v===false?'bad':''}" ${complete?'':'open'}><summary><span class="match-summary"><span>${esc(a)} <b>${esc(s[0]||'—')}</b></span><span>${esc(b)} <b>${esc(s[1]||'—')}</b></span></span>${v===false?'<span class="err">Check score</span>':''}</summary><div class="match-score-fields">${line(a,0)}${line(b,1)}<button class="btn p" onclick="refreshSavedMatch(this.closest(\'[data-match-key]\').dataset.matchKey)">Done</button>${v===false?'<div class="err">Not a valid final score. Win at 21 by 2, or 30-29 at most.</div>':''}</div></details>`;
 }
@@ -200,7 +200,7 @@ function refreshSavedMatch(k){
 }
 
 function updateDragScore(control,value){
-  value=Math.max(0,Math.min(21,value));
+  value=Math.max(0,Math.min(50,value));
   setS({dataset:control.dataset,value:String(value)},false);
   if(!control.isConnected)return;
   const saved=sc(control.dataset.k)[+control.dataset.i];
