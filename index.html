@@ -245,5 +245,26 @@ function render(){
   save();
 }
 $('#file').addEventListener('change',async e=>{const f=e.target.files[0];if(f){S.raw=await f.text();S.tab='setup';render();setTimeout(loadRaw)}e.target.value=''});
+// Swipe between sections unless the gesture starts on a control or horizontal scroller.
+let swipeStart=null;
+document.addEventListener('touchstart',e=>{
+  swipeStart=null;
+  if(e.touches.length!==1)return;
+  const target=e.target;
+  if(target.closest('input,select,textarea,button,a,nav'))return;
+  for(let el=target;el&&el!==document.body;el=el.parentElement){
+    if(el.scrollWidth>el.clientWidth+2&&['auto','scroll'].includes(getComputedStyle(el).overflowX))return;
+  }
+  swipeStart={x:e.touches[0].clientX,y:e.touches[0].clientY,time:Date.now()};
+},{passive:true});
+document.addEventListener('touchend',e=>{
+  const start=swipeStart;swipeStart=null;
+  if(!start||e.touches.length||!e.changedTouches.length)return;
+  const dx=e.changedTouches[0].clientX-start.x,dy=e.changedTouches[0].clientY-start.y;
+  if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.5||Date.now()-start.time>1000)return;
+  const tabs=['setup','tables','qualifiers','bracket','summary'],next=tabs.indexOf(S.tab)+(dx<0?1:-1);
+  if(next>=0&&next<tabs.length)go(tabs[next]);
+},{passive:true});
+document.addEventListener('touchcancel',()=>{swipeStart=null},{passive:true});
 render();
 </script></body></html>
