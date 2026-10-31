@@ -186,7 +186,10 @@ function refreshSavedMatch(k){
     render();
     const match=findMatch();
     if(match){
-      window.scrollBy(0,match.getBoundingClientRect().top-top);
+      const search=main.querySelector('.team-search-card');
+      const searchBottom=search?Math.max(0,search.getBoundingClientRect().bottom):0;
+      const desiredTop=Math.max(top,searchBottom+16);
+      window.scrollBy(0,match.getBoundingClientRect().top-desiredTop);
       match.classList.add('score-saved');
     }
     if(focusId){
