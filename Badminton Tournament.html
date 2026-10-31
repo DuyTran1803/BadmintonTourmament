@@ -221,7 +221,7 @@ function missingScores(t){
 function vTables(){
   if(!names().length)return empty;
   const wilds=new Set(quals().t.map(r=>r.n));
-  return `<div class="card team-search-card"><label for="team-search"><b>Find team scores</b></label><input id="team-search" class="team-search" type="search" placeholder="Search team or player name…" value="${esc(S.teamSearch||'')}" oninput="searchScores(this.value)"><p id="search-status" role="status"></p></div>`+names().map(t=>{
+  return `<div class="card team-search-card"><input aria-label="Find team scores" id="team-search" class="team-search" type="search" placeholder="Search team or player name…" value="${esc(S.teamSearch||'')}" oninput="searchScores(this.value)"><p id="search-status" role="status"></p></div>`+names().map(t=>{
     const L=stand(t);
     return `<section class="card" data-score-table><h2>${esc(t)} <span class="missing-score-badge ${missingScores(t)===0?'complete':''}" title="Matches missing one or both scores" aria-label="${missingScores(t)} matches missing scores">${missingScores(t)}</span></h2><div class="sc"><table><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>Total score</th><th>Against</th><th>Diff</th><th>%</th></tr>
     ${L.map((r,i)=>`<tr class="${i<2?'q':i===2&&wilds.has(r.n)?'wild':i===2?'t':''}"><td>${i+1}</td><td>${esc(r.n)}${i===2&&wilds.has(r.n)?'<span class="tag wild">best 3rd</span>':''}</td><td>${r.p}</td><td>${r.w}</td><td><b>${r.pf}</b></td><td>${r.pa}</td><td>${r.d>0?'+':''}${r.d}</td><td>${r.pct.toFixed(1)}</td></tr>`).join('')}</table></div>
