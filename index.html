@@ -117,7 +117,10 @@ const done=()=>names().length>0&&names().every(t=>S.tables[t].length>=2&&rr(t).e
 function quals(){
   const N=names(),st=N.map(t=>stand(t));
   const th=st.map(x=>x[2]).filter(Boolean).sort((a,b)=>b.pf-a.pf||b.pct-a.pct||b.w-a.w);
-  return{N,st,f:st.map(x=>x[0]),s:st.map(x=>x[1]),th,t:th.slice(0,2)};
+  const automatic=st.reduce((count,rows)=>count+Math.min(2,rows.length),0);
+  const target=2**Math.ceil(Math.log2(Math.max(4,automatic)));
+  const extra=target-automatic;
+  return{N,st,f:st.map(x=>x[0]),s:st.map(x=>x[1]),th,t:th.slice(0,extra)};
 }
 function seedOrder(size){let a=[1,2];while(a.length<size){const next=a.length*2+1;a=a.flatMap(n=>[n,next-n])}return a}
 function round1(Q){
@@ -202,8 +205,8 @@ function vQual(){
   const top=Q.N.map((t,i)=>[Q.f[i],Q.s[i]]).map(([f,s],i)=>`<tr class="q"><td>1</td><td>${f?esc(f.n):'-'}<span class="tag">in</span></td><td>${esc(Q.N[i])}</td><td>${f?f.pf:0}</td><td>${f?f.pct.toFixed(1):0}</td><td>${f?f.w:0}</td></tr><tr class="q"><td>2</td><td>${s?esc(s.n):'-'}<span class="tag">in</span></td><td>${esc(Q.N[i])}</td><td>${s?s.pf:0}</td><td>${s?s.pct.toFixed(1):0}</td><td>${s?s.w:0}</td></tr>`).join('');
   return `${d?'':'<div class="warn">Provisional. Final once every table match has a valid score.</div>'}
   <section class="card"><h2>1st and 2nd of each table</h2>${tbl(top)}</section>
-  <section class="card"><h2>Best 3rd-placed teams</h2><p class="note">Ranked by total score across all tables. The top 2 advance. Percentage is shown for comparison.</p>
-  ${Q.th.length?tbl(Q.th.map((r,i)=>`<tr class="${i<2?'wild':''}"><td>${i+1}</td><td>${esc(r.n)}${i<2?'<span class="tag wild">best 3rd</span>':'<span class="tag out">out</span>'}</td><td>${esc(r.t)}</td><td><b>${r.pf}</b></td><td>${r.pct.toFixed(1)}</td><td>${r.w}</td></tr>`).join('')):'<p class="note">No table has a 3rd-placed team.</p>'}</section>`;
+  <section class="card"><h2>Best 3rd-placed teams</h2><p class="note">${Q.t.length?'Ranked by total score across all tables. The top '+Q.t.length+' advance toward a '+(2**Math.ceil(Math.log2(Math.max(4,Q.f.filter(Boolean).length+Q.s.filter(Boolean).length))))+'-team bracket. Any unfilled slots receive byes.':'No best-third-place qualifiers are needed. The top two teams from each table advance.'} Percentage is shown for comparison.</p>
+  ${Q.th.length?tbl(Q.th.map((r,i)=>`<tr class="${i<Q.t.length?'wild':''}"><td>${i+1}</td><td>${esc(r.n)}${i<Q.t.length?'<span class="tag wild">best 3rd</span>':'<span class="tag out">out</span>'}</td><td>${esc(r.t)}</td><td><b>${r.pf}</b></td><td>${r.pct.toFixed(1)}</td><td>${r.w}</td></tr>`).join('')):'<p class="note">No table has a 3rd-placed team.</p>'}</section>`;
 }
 function champ(R){
   const f=R[R.length-1][0];
