@@ -49,7 +49,7 @@ input,select{width:76px;min-height:48px;font:inherit;font-size:19px;font-weight:
 @media(max-width:560px){main{padding:12px}.card{padding:12px}.grid{grid-template-columns:1fr}.rd{flex-basis:84vw}th,td{padding:7px 6px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 @media print{header,.btn{display:none!important}.card{box-shadow:none;break-inside:avoid}.br{overflow:visible}.rd{flex-basis:24%}}
-</style></head><body>
+details.score-entry{margin-top:14px;border-top:1px solid var(--ln)}details.score-entry summary{cursor:pointer;min-height:44px;padding:12px 0;font-weight:700}input.team-search{width:100%;font-size:16px;text-align:left;font-weight:400}[hidden]{display:none!important}</style></head><body>
 <header><h1>Badminton Tournament</h1><nav id="nav" aria-label="Tournament sections"></nav></header>
 <main id="main"></main>
 <input class="sr" id="file" type="file" accept="application/json,.json">
@@ -188,14 +188,36 @@ function vSetup(){
   <button class="btn" onclick="go('tables')">Go to tables</button>
   <button class="btn" onclick="demoTables()">Fill table scores randomly (demo)</button></div>`:''}`;
 }
+function rememberScoreSection(el){
+  if(!el.closest('#main')||(S.teamSearch||'').trim())return;
+  S.openTables=Object.assign(Object.create(null),S.openTables||{});
+  S.openTables[el.dataset.table]=el.open;save();
+}
+function searchScores(value){S.teamSearch=value;save();filterScoreRows()}
+function filterScoreRows(){
+  const main=$('#main'),query=(S.teamSearch||'').trim().toLocaleLowerCase();
+  let total=0;
+  main.querySelectorAll('[data-score-table]').forEach(section=>{
+    let count=0;
+    section.querySelectorAll('[data-score-match]').forEach(row=>{
+      const match=!query||row.dataset.scoreMatch.includes(query);
+      row.hidden=!match;if(match)count++;
+    });
+    section.hidden=count===0;total+=count;
+    const details=section.querySelector('details');
+    details.open=query?count>0:!!(S.openTables&&S.openTables[details.dataset.table]);
+  });
+  const status=main.querySelector('#search-status');
+  if(status)status.textContent=query?(total?total+' matching matches':'No matching teams. Try another name.'):'Open a table to enter scores.';
+}
 function vTables(){
   if(!names().length)return empty;
   const wilds=new Set(quals().t.map(r=>r.n));
-  return names().map(t=>{
+  return `<div class="card"><label for="team-search"><b>Find team scores</b></label><input id="team-search" class="team-search" type="search" placeholder="Search team or player name…" value="${esc(S.teamSearch||'')}" oninput="searchScores(this.value)"><p id="search-status" role="status"></p></div>`+names().map(t=>{
     const L=stand(t);
-    return `<section class="card"><h2>${esc(t)}</h2><div class="sc"><table><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>Total score</th><th>Against</th><th>Diff</th><th>%</th></tr>
+    return `<section class="card" data-score-table><h2>${esc(t)}</h2><div class="sc"><table><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>Total score</th><th>Against</th><th>Diff</th><th>%</th></tr>
     ${L.map((r,i)=>`<tr class="${i<2?'q':i===2&&wilds.has(r.n)?'wild':i===2?'t':''}"><td>${i+1}</td><td>${esc(r.n)}${i===2&&wilds.has(r.n)?'<span class="tag wild">best 3rd</span>':''}</td><td>${r.p}</td><td>${r.w}</td><td><b>${r.pf}</b></td><td>${r.pa}</td><td>${r.d>0?'+':''}${r.d}</td><td>${r.pct.toFixed(1)}</td></tr>`).join('')}</table></div>
-    <div class="grid">${rr(t).map(([a,b])=>mrow('rr',a,b)).join('')}</div></section>`;
+    <details class="score-entry" data-table="${esc(t)}" ${S.openTables&&S.openTables[t]?'open':''} ontoggle="rememberScoreSection(this)"><summary>Enter scores · ${rr(t).length} matches</summary><div class="grid">${rr(t).map(([a,b])=>`<div data-score-match="${esc((a+' '+b).toLocaleLowerCase())}">${mrow('rr',a,b)}</div>`).join('')}</div></details></section>`;
   }).join('');
 }
 function vQual(){
@@ -245,6 +267,7 @@ function render(){
   const tabs=['setup','tables','qualifiers','bracket','summary'];
   $('#nav').innerHTML=tabs.map(t=>`<button class="${S.tab===t?'on':''}" aria-current="${S.tab===t?'page':'false'}" onclick="go('${t}')">${t[0].toUpperCase()+t.slice(1)}</button>`).join('');
   $('#main').innerHTML=(S.notice?`<div class="warn" style="background:var(--ok);color:var(--g)">${esc(S.notice)}</div>`:'')+({setup:vSetup,tables:vTables,qualifiers:vQual,bracket:vBracket,summary:vSummary}[S.tab]||vSetup)();S.notice='';
+  if(S.tab==='tables')filterScoreRows();
   save();
 }
 $('#file').addEventListener('change',async e=>{const f=e.target.files[0];if(f){S.raw=await f.text();S.tab='setup';render();setTimeout(loadRaw)}e.target.value=''});
