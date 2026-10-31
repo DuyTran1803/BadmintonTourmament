@@ -149,7 +149,7 @@ function bracket(Q){
 }
 function mrow(p,a,b){
   const s=sc(key(p,a,b)),v=valid(s[0],s[1]),w=v===true?(+s[0]>+s[1]?0:1):-1,k=esc(key(p,a,b));
-  const line=(n,i)=>`<div class="l ${w===i?'w':''}"><span>${esc(n)}</span><select aria-label="Score for ${esc(n)}" data-k="${k}" data-i="${i}" onchange="setS(this)"><option value="" ${s[i]===''?'selected':''}>—</option>${Array.from({length:22},(_,v)=>`<option value="${v}" ${String(s[i])===String(v)?'selected':''}>${v}</option>`).join('')}</select></div>`;
+  const line=(n,i)=>`<div class="l ${w===i?'w':''}"><span>${esc(n)}</span><select aria-label="Score for ${esc(n)}" data-k="${k}" data-i="${i}" onchange="setS(this)"><option value="" ${s[i]===''?'selected':''}>—</option>${Array.from({length:22},(_,i)=>21-i).map(v=>`<option value="${v}" ${String(s[i])===String(v)?'selected':''}>${v}</option>`).join('')}</select></div>`;
   return `<div class="m ${v===false?'bad':''}">${line(a,0)}${line(b,1)}${v===false?'<div class="err">Not a valid final score. Win at 21 by 2, or 30-29 at most.</div>':''}</div>`;
 }
 function qualSig(){return done()?quals().f.concat(quals().s,quals().t).map(r=>r.t+':'+r.n).sort().join('|'):''}
