@@ -33,7 +33,7 @@ td b{font-weight:800}
 .l{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 0}
 .l+.l{border-top:1px dashed var(--ln)}.l.w span{font-weight:800}.l.w span:before{content:"\25B8 ";color:var(--g)}
 .l span{overflow-wrap:anywhere}.tbd span{color:var(--mu);font-style:italic}
-input{width:62px;min-height:48px;font:inherit;font-size:19px;font-weight:700;text-align:center;padding:7px 4px;border:1px solid var(--ln);border-radius:6px;background:var(--bg);color:var(--tx)}
+input,select{width:76px;min-height:48px;font:inherit;font-size:19px;font-weight:700;text-align:center;padding:7px 4px;border:1px solid var(--ln);border-radius:6px;background:var(--bg);color:var(--tx)}
 .err{color:var(--bad);font-size:12px;padding-bottom:4px}
 .warn{background:var(--badbg);color:var(--bad);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:14px}
 .note{color:var(--mu);margin:0 0 12px}
@@ -146,7 +146,7 @@ function bracket(Q){
 }
 function mrow(p,a,b){
   const s=sc(key(p,a,b)),v=valid(s[0],s[1]),w=v===true?(+s[0]>+s[1]?0:1):-1,k=esc(key(p,a,b));
-  const line=(n,i)=>`<div class="l ${w===i?'w':''}"><span>${esc(n)}</span><input inputmode="numeric" aria-label="Score for ${esc(n)}" value="${esc(s[i])}" data-k="${k}" data-i="${i}" oninput="setS(this,false)" onchange="setS(this)"></div>`;
+  const line=(n,i)=>`<div class="l ${w===i?'w':''}"><span>${esc(n)}</span><select aria-label="Score for ${esc(n)}" data-k="${k}" data-i="${i}" onchange="setS(this)"><option value="" ${s[i]===''?'selected':''}>—</option>${Array.from({length:22},(_,v)=>`<option value="${v}" ${String(s[i])===String(v)?'selected':''}>${v}</option>`).join('')}</select></div>`;
   return `<div class="m ${v===false?'bad':''}">${line(a,0)}${line(b,1)}${v===false?'<div class="err">Not a valid final score. Win at 21 by 2, or 30-29 at most.</div>':''}</div>`;
 }
 function qualSig(){return done()?quals().f.concat(quals().s,quals().t).map(r=>r.t+':'+r.n).sort().join('|'):''}
